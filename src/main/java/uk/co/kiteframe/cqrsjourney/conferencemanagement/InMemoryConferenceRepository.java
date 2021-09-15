@@ -1,8 +1,11 @@
 package uk.co.kiteframe.cqrsjourney.conferencemanagement;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Repository
 public class InMemoryConferenceRepository implements ConferenceRepository {
 
     Map<String, Conference> conferences = new HashMap<>();

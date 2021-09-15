@@ -1,7 +1,10 @@
 package uk.co.kiteframe.cqrsjourney.conferencemanagement;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class CreateConferenceCommandHandler {
-    private ConferenceRepository repository;
+    private final ConferenceRepository repository;
 
     public CreateConferenceCommandHandler(ConferenceRepository repository) {
         this.repository = repository;
