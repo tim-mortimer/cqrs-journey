@@ -79,10 +79,7 @@ public class RegisterToConferenceListenerTest {
     }
 
     private void awaitForMessageToBeQueued() {
-        await().until(() -> {
-            System.out.println(amqpAdmin.getQueueInfo(QUEUE_NAME).getMessageCount());
-            return amqpAdmin.getQueueInfo(QUEUE_NAME).getMessageCount() == 1;
-        });
+        await().until(() -> amqpAdmin.getQueueInfo(QUEUE_NAME).getMessageCount() == 1);
     }
 
     private void startListener() {
