@@ -1,7 +1,10 @@
 package uk.co.kiteframe.cqrsjourney.ordersandregistrations;
 
+import org.springframework.stereotype.Service;
+
 import java.util.stream.Collectors;
 
+@Service
 public class RegisterToConferenceCommandHandler {
     private final static String USER_ID = "e1236551-da3e-43ed-b600-a6e8a7e747e0";
     private final OrderRepository orderRepository;
