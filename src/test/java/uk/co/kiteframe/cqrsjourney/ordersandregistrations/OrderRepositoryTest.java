@@ -1,10 +1,15 @@
 package uk.co.kiteframe.cqrsjourney.ordersandregistrations;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import uk.co.kiteframe.cqrsjourney.EventBus;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class OrderRepositoryTest {
 
@@ -14,9 +19,16 @@ public class OrderRepositoryTest {
     private final static String SEAT_TYPE_1_ID = "7b773fc7-5a6e-4c99-af83-6e666437d184";
     private final static String SEAT_TYPE_2_ID = "c15ab856-6251-40ad-9ffb-defb18bf5dd0";
 
+    EventBus eventBus;
+
+    @BeforeEach
+    void setUp() {
+        eventBus = mock(EventBus.class);
+    }
+
     @Test
     void saving_and_retrieving_an_order() {
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
+        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
         orderRepository.save(new Order(
                 ORDER_ID,
                 USER_ID,
@@ -35,6 +47,37 @@ public class OrderRepositoryTest {
                 .isEqualTo(List.of(
                         new Order.OrderItem(SEAT_TYPE_1_ID, 2),
                         new Order.OrderItem(SEAT_TYPE_2_ID, 1)
+                ));
+    }
+
+    @Test
+    void any_events_are_dispatched_to_the_event_bus() {
+        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
+        orderRepository.save(new Order(
+                ORDER_ID,
+                USER_ID,
+                CONFERENCE_ID,
+                List.of(
+                        new Order.OrderItem(SEAT_TYPE_1_ID, 2),
+                        new Order.OrderItem(SEAT_TYPE_2_ID, 1)
+                )
+        ));
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<DomainEvent>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(eventBus).dispatch(argumentCaptor.capture());
+
+        assertThat(argumentCaptor.getValue()).usingRecursiveComparison()
+                .isEqualTo(List.of(
+                        new OrderPlaced(
+                                ORDER_ID,
+                                CONFERENCE_ID,
+                                USER_ID,
+                                List.of(
+                                        new OrderPlaced.Seat(SEAT_TYPE_1_ID, 2),
+                                        new OrderPlaced.Seat(SEAT_TYPE_2_ID, 1)
+                                )
+                        )
                 ));
     }
 }

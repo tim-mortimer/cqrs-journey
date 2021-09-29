@@ -1,6 +1,7 @@
 package uk.co.kiteframe.cqrsjourney.ordersandregistrations;
 
 import org.junit.jupiter.api.Test;
+import uk.co.kiteframe.cqrsjourney.EventBus;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class RegisterToConferenceCommandHandlerTest {
 
     @Test
     void registering_to_a_conference() {
-        OrderRepository orderRepository = new InMemoryOrderRepository();
+        OrderRepository orderRepository = new InMemoryOrderRepository(new EventBus());
         var handler = new RegisterToConferenceCommandHandler(orderRepository);
         handler.handle(new RegisterToConference(
                 ORDER_ID,
