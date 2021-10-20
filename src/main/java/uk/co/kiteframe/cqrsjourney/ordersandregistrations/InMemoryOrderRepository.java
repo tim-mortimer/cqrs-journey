@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import uk.co.kiteframe.cqrsjourney.EventBus;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -24,6 +25,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     @Override
     public void save(Order order) {
         orders.put(order.id(), order);
-        eventBus.dispatch(order.events());
+        eventBus.dispatch(List.copyOf(order.events()));
+        order.flushEvents();
     }
 }

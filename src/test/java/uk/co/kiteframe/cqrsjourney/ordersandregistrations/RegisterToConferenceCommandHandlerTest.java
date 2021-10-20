@@ -2,6 +2,7 @@ package uk.co.kiteframe.cqrsjourney.ordersandregistrations;
 
 import org.junit.jupiter.api.Test;
 import uk.co.kiteframe.cqrsjourney.EventBus;
+import uk.co.kiteframe.cqrsjourney.InMemoryEventBus;
 
 import java.util.List;
 
@@ -17,8 +18,10 @@ public class RegisterToConferenceCommandHandlerTest {
 
     @Test
     void registering_to_a_conference() {
-        OrderRepository orderRepository = new InMemoryOrderRepository(new EventBus());
+        EventBus eventBus = new InMemoryEventBus();
+        OrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
         var handler = new RegisterToConferenceCommandHandler(orderRepository);
+
         handler.handle(new RegisterToConference(
                 ORDER_ID,
                 CONFERENCE_ID,
@@ -38,8 +41,8 @@ public class RegisterToConferenceCommandHandlerTest {
                         new Order.OrderItem(SEAT_TYPE_2_ID, 1)
                 ));
 
-        assertThat(order.events()).hasSize(1);
-        OrderPlaced orderPlaced = (OrderPlaced) order.events().get(0);
+        assertThat(eventBus.sent()).hasSize(1);
+        OrderPlaced orderPlaced = (OrderPlaced) eventBus.sent().get(0);
         assertThat(orderPlaced.orderId()).isEqualTo(ORDER_ID);
         assertThat(orderPlaced.conferenceId()).isEqualTo(CONFERENCE_ID);
         assertThat(orderPlaced.userId()).isEqualTo(USER_ID);

@@ -1,9 +1,9 @@
 package uk.co.kiteframe.cqrsjourney.ordersandregistrations;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import uk.co.kiteframe.cqrsjourney.EventBus;
+import uk.co.kiteframe.cqrsjourney.InMemoryEventBus;
 
 import java.util.List;
 
@@ -19,16 +19,9 @@ public class OrderRepositoryTest {
     private final static String SEAT_TYPE_1_ID = "7b773fc7-5a6e-4c99-af83-6e666437d184";
     private final static String SEAT_TYPE_2_ID = "c15ab856-6251-40ad-9ffb-defb18bf5dd0";
 
-    EventBus eventBus;
-
-    @BeforeEach
-    void setUp() {
-        eventBus = mock(EventBus.class);
-    }
-
     @Test
     void saving_and_retrieving_an_order() {
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
+        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(new InMemoryEventBus());
         orderRepository.save(new Order(
                 ORDER_ID,
                 USER_ID,
@@ -52,6 +45,7 @@ public class OrderRepositoryTest {
 
     @Test
     void any_events_are_dispatched_to_the_event_bus() {
+        EventBus eventBus = mock(EventBus.class);
         InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
         orderRepository.save(new Order(
                 ORDER_ID,
@@ -79,5 +73,26 @@ public class OrderRepositoryTest {
                                 )
                         )
                 ));
+    }
+
+    @Test
+    void saving_an_order_flushes_its_events() {
+        var eventBus = new InMemoryEventBus();
+        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
+        var order = anOrder();
+        orderRepository.save(order);
+        assertThat(order.events()).isEmpty();
+    }
+
+    private Order anOrder() {
+        return new Order(
+                ORDER_ID,
+                USER_ID,
+                CONFERENCE_ID,
+                List.of(
+                        new Order.OrderItem(SEAT_TYPE_1_ID, 2),
+                        new Order.OrderItem(SEAT_TYPE_2_ID, 1)
+                )
+        );
     }
 }

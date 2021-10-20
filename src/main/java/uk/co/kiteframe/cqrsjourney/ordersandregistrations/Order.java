@@ -1,5 +1,6 @@
 package uk.co.kiteframe.cqrsjourney.ordersandregistrations;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,14 +17,14 @@ public class Order {
         this.userId = userId;
         this.conferenceId = conferenceId;
         this.lines = orderItems;
-        this.events = List.of(
-                new OrderPlaced(
-                        id,
-                        conferenceId,
-                        userId,
-                        orderItems.stream()
-                                .map(orderItem -> new OrderPlaced.Seat(orderItem.seatTypeId(), orderItem.quantity()))
-                                .collect(Collectors.toList())));
+        this.events = new ArrayList<>();
+        this.events.add(new OrderPlaced(
+                id,
+                conferenceId,
+                userId,
+                orderItems.stream()
+                        .map(orderItem -> new OrderPlaced.Seat(orderItem.seatTypeId(), orderItem.quantity()))
+                        .collect(Collectors.toList())));
     }
 
     public String id() {
@@ -44,6 +45,10 @@ public class Order {
 
     public List<DomainEvent> events() {
         return events;
+    }
+
+    public void flushEvents() {
+        events.clear();
     }
 
     public static record OrderItem(String seatTypeId, int quantity) {
