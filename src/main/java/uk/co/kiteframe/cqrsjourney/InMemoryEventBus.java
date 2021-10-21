@@ -20,7 +20,6 @@ public class InMemoryEventBus implements EventBus {
         sent.addAll(events);
     }
 
-    @Override
     public List<DomainEvent> sent() {
         return sent;
     }

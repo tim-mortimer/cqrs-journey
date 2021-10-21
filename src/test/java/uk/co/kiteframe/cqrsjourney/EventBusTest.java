@@ -1,11 +1,10 @@
 package uk.co.kiteframe.cqrsjourney;
 
 import org.junit.jupiter.api.Test;
+import uk.co.kiteframe.cqrsjourney.ordersandregistrations.DomainEvent;
 import uk.co.kiteframe.cqrsjourney.ordersandregistrations.OrderPlaced;
 
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class EventBusTest {
 
@@ -16,6 +15,8 @@ public abstract class EventBusTest {
     private final static String SEAT_TYPE_2_ID = "c15ab856-6251-40ad-9ffb-defb18bf5dd0";
 
     abstract EventBus getEventBus();
+
+    abstract void assertSent(DomainEvent event);
 
     @Test
     void publishing_an_event() {
@@ -31,15 +32,14 @@ public abstract class EventBusTest {
                 )
         )));
 
-        assertThat(eventBus.sent()).usingRecursiveComparison()
-                .isEqualTo(List.of(new OrderPlaced(
-                        ORDER_ID,
-                        CONFERENCE_ID,
-                        USER_ID,
-                        List.of(
-                                new OrderPlaced.Seat(SEAT_TYPE_1_ID, 1),
-                                new OrderPlaced.Seat(SEAT_TYPE_2_ID, 2)
-                        )
-                )));
+        assertSent(new OrderPlaced(
+                ORDER_ID,
+                CONFERENCE_ID,
+                USER_ID,
+                List.of(
+                        new OrderPlaced.Seat(SEAT_TYPE_1_ID, 1),
+                        new OrderPlaced.Seat(SEAT_TYPE_2_ID, 2)
+                )
+        ));
     }
 }

@@ -18,7 +18,7 @@ public class RegisterToConferenceCommandHandlerTest {
 
     @Test
     void registering_to_a_conference() {
-        EventBus eventBus = new InMemoryEventBus();
+        InMemoryEventBus eventBus = new InMemoryEventBus();
         OrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
         var handler = new RegisterToConferenceCommandHandler(orderRepository);
 
