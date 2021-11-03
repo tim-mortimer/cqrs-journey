@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class ResgistrationProcessManagerTest {
+public class RegistrationProcessManagerTest {
 
     private final static String ORDER_ID = "fb46052b-df2e-43ca-a6fa-c974ab9ae770";
     private final static String USER_ID = "e1236551-da3e-43ed-b600-a6e8a7e747e0";
