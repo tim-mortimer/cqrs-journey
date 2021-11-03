@@ -11,7 +11,15 @@ public class RegistrationProcessManager {
     private ProcessState state;
     private List<Command> commands;
 
+    public RegistrationProcessManager() {
+        state = ProcessState.NOT_STARTED;
+    }
+
     public void handle(OrderPlaced orderPlaced) {
+        if (state != ProcessState.NOT_STARTED) {
+            throw new IllegalStateException();
+        }
+
         orderId = orderPlaced.orderId();
         reservationId = UUID.randomUUID().toString();
         state = ProcessState.AWAITING_RESERVATION_CONFIRMATION;
@@ -39,6 +47,7 @@ public class RegistrationProcessManager {
     }
 
     public enum ProcessState {
+        NOT_STARTED,
         AWAITING_RESERVATION_CONFIRMATION
     }
 }

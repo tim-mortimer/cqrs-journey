@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.*;
 
 public class ResgistrationProcessManagerTest {
 
@@ -43,5 +42,21 @@ public class ResgistrationProcessManagerTest {
                 processManager.reservationId(),
                 3
         ));
+    }
+
+    @Test
+    void should_not_handle_order_placed_events_when_not_in_not_started_state() {
+        var processManager = new RegistrationProcessManager();
+        processManager.handle(new OrderPlaced(ORDER_ID, USER_ID, CONFERENCE_ID, List.of(
+                new OrderPlaced.Seat(SEAT_TYPE_1_ID, 2),
+                new OrderPlaced.Seat(SEAT_TYPE_2_ID, 1)
+        )));
+
+        assertThat(processManager.state()).isEqualTo(RegistrationProcessManager.ProcessState.AWAITING_RESERVATION_CONFIRMATION);
+
+        assertThatThrownBy(() -> processManager.handle(new OrderPlaced(ORDER_ID, USER_ID, CONFERENCE_ID, List.of(
+                new OrderPlaced.Seat(SEAT_TYPE_1_ID, 2),
+                new OrderPlaced.Seat(SEAT_TYPE_2_ID, 1)
+        )))).isInstanceOf(IllegalStateException.class);
     }
 }
