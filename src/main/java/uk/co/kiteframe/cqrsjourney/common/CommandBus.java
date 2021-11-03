@@ -15,10 +15,18 @@ public class CommandBus {
         this.topicExchange = topicExchange;
     }
 
-    public void send(RegisterToConference registerToConference) {
+    public void send(Command command) {
+        String routingKey;
+
+        if (command instanceof RegisterToConference) {
+            routingKey = "commands.registerToConference";
+        } else {
+            routingKey = "commands.makeSeatReservation";
+        }
+
         amqpTemplate.convertAndSend(
                 topicExchange.getName(),
-                "commands.registerToConference",
-                registerToConference);
+                routingKey,
+                command);
     }
 }
