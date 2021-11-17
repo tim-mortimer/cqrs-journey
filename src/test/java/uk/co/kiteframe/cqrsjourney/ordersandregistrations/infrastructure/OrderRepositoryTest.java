@@ -51,7 +51,7 @@ public class OrderRepositoryTest {
     void any_events_are_dispatched_to_the_event_bus() {
         EventBus eventBus = mock(EventBus.class);
         InMemoryOrderRepository orderRepository = new InMemoryOrderRepository(eventBus);
-        orderRepository.save(new Order(
+        orderRepository.save(Order.place(
                 ORDER_ID,
                 USER_ID,
                 CONFERENCE_ID,

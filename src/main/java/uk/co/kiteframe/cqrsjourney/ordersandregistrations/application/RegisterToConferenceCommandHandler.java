@@ -16,7 +16,7 @@ public class RegisterToConferenceCommandHandler {
     }
 
     public void handle(RegisterToConference command) {
-        orderRepository.save(new Order(
+        orderRepository.save(Order.place(
                 command.orderId(),
                 USER_ID,
                 command.conferenceId(),

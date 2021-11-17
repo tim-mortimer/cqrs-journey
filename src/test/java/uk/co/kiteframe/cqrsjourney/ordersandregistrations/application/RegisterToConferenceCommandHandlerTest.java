@@ -2,8 +2,6 @@ package uk.co.kiteframe.cqrsjourney.ordersandregistrations.application;
 
 import org.junit.jupiter.api.Test;
 import uk.co.kiteframe.cqrsjourney.common.InMemoryEventBus;
-import uk.co.kiteframe.cqrsjourney.ordersandregistrations.application.RegisterToConference;
-import uk.co.kiteframe.cqrsjourney.ordersandregistrations.application.RegisterToConferenceCommandHandler;
 import uk.co.kiteframe.cqrsjourney.ordersandregistrations.domain.Order;
 import uk.co.kiteframe.cqrsjourney.ordersandregistrations.domain.OrderPlaced;
 import uk.co.kiteframe.cqrsjourney.ordersandregistrations.domain.OrderRepository;

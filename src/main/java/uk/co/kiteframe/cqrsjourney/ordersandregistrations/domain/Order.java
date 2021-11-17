@@ -20,13 +20,18 @@ public class Order {
         this.conferenceId = conferenceId;
         this.lines = orderItems;
         this.events = new ArrayList<>();
-        this.events.add(new OrderPlaced(
+    }
+
+    public static Order place(String id, String userId, String conferenceId, List<OrderItem> orderItems) {
+        var order = new Order(id, userId, conferenceId, orderItems);
+        order.events.add(new OrderPlaced(
                 id,
                 conferenceId,
                 userId,
                 orderItems.stream()
                         .map(orderItem -> new OrderPlaced.Seat(orderItem.seatTypeId(), orderItem.quantity()))
                         .collect(Collectors.toList())));
+        return order;
     }
 
     public String id() {
